@@ -10,7 +10,7 @@
       true,
       "spaces"
     ],
-    "insecure-random": [ true ],
+    "insecure-random": [ false ],
     "interface-name": [ true, "always-prefix"],
     "jsdoc-format": true,
     "literal-spacing": [

@@ -1,7 +1,7 @@
 import * as chalk from 'chalk';
 
 interface IWelcomeOptions {
-  b: string
+  b: string;
 }
 
 export function cmdWelcome(options: IWelcomeOptions): void {
