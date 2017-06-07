@@ -1,0 +1,6 @@
+version: '3'
+services:
+  web:
+    image: nimo1491/emulator
+    ports:
+      - 8080

@@ -42,11 +42,25 @@ The document will be put into the *docs* folder.
 
 Use [pkg](https://github.com/zeit/pkg) to package the application into an executable:
 
-```
+```bash
 yarn run package
 ```
 
 The executable will be put into the *dist* folder.
+
+## Docker Support
+
+### Build your docker
+
+```bash
+docker build -t name/emulator .
+```
+
+### Run your docker
+
+```bash
+docker run -d --name=emulator -p 8080:8080 name/emulator
+```
 
 ## License
 
