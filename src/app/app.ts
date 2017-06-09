@@ -1,7 +1,7 @@
 import { basename } from 'path';
 import * as yargs from 'yargs';
 import { cmdWelcome } from './cmdWelcome';
-import { cmdSession } from './cmdSession';
+import { cmdManage } from './cmdManage';
 
 // Get real executable name for pkg
 const executable: string = basename(__filename);
@@ -11,6 +11,7 @@ let options = yargs
   .usage(`Usage: ${executable} <command> [options]`)
   .command('welcome', 'Welcome message')
   .command('session', 'Session test')
+  .command('manage', 'Manage multiple nodes')
   .demandCommand(1, 'Must provide a valid command')
   .epilog('Copyright Year Company/Author')
   .argv;
@@ -40,11 +41,11 @@ if (command === 'welcome') {
   } else {
     cmdWelcome(options);
   }
-} else if (command === 'session') {
+} else if (command === 'manage') {
   options = yargs
   .reset()
-  .usage(`Usage: ${executable} session [options]`)
-  .example(`${executable} session`, 'Login, get firmware version, then logout')
+  .usage(`Usage: ${executable} manage [options]`)
+  .example(`${executable} session`, 'Go to management console')
   .options('h', {
     alias: 'help',
     describe: 'Show help',
@@ -57,7 +58,7 @@ if (command === 'welcome') {
   if (options.h) {
     yargs.showHelp();
   } else {
-    cmdSession();
+    cmdManage();
   }
 } else {
   yargs.showHelp();
