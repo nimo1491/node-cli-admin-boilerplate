@@ -10,7 +10,6 @@ const executable: string = basename(__filename);
 let options = yargs
   .usage(`Usage: ${executable} <command> [options]`)
   .command('welcome', 'Welcome message')
-  .command('session', 'Session test')
   .command('manage', 'Manage multiple nodes')
   .demandCommand(1, 'Must provide a valid command')
   .epilog('Copyright Year Company/Author')

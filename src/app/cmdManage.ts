@@ -14,11 +14,9 @@ let errors: number = 0;
 export function cmdManage() {
   const vorpal = new Vorpal();
   let config: any;
-  let actions: Function[];
 
   try {
     config = safeLoad(readFileSync('./config.yml', 'utf8'));
-    actions = config.devices.map(dev => getFirmwareInfoWrapper(dev.ip, dev.username, dev.password));
   } catch (error) {
     return console.error(error);
   }
@@ -26,7 +24,9 @@ export function cmdManage() {
   vorpal
     .command('mc info', 'Get firmware information')
     .action(async (args, callback) => {
-      await Promise.all(actions);
+      await Promise.all(config.devices.map(
+        dev => getFirmwareInfoWrapper(dev.ip, dev.username, dev.password),
+      ));
 
       const columns = columnify(fwInfoList, {
         headingTransform: heading => chalk.bold.magenta(heading.toUpperCase()),
