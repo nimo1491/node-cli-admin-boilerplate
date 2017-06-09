@@ -1,4 +1,4 @@
-protocol: http
+protocol: https
 devices:
   - ip: 127.0.0.1:32768
   - ip: 127.0.0.1:32769

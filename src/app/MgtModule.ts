@@ -32,7 +32,7 @@ export class MgtModule {
         }
 
         if (response.statusCode !== 200) {
-          return new Error(`HTTP Error: ${response.statusCode}`);
+          return reject(new Error(`HTTP Error: ${response.statusCode}`));
         }
 
         this.cookie = response.headers['set-cookie'];
@@ -57,7 +57,7 @@ export class MgtModule {
         }
 
         if (response.statusCode !== 200) {
-          return new Error(`HTTP Error: ${response.statusCode}`);
+          return reject(new Error(`HTTP Error: ${response.statusCode}`));
         }
 
         this.cookie = '';
@@ -82,7 +82,7 @@ export class MgtModule {
         }
 
         if (response.statusCode !== 200) {
-          return new Error(`HTTP Error: ${response.statusCode}`);
+          return reject(new Error(`HTTP Error: ${response.statusCode}`));
         }
 
         return resolve(JSON.parse(body));
