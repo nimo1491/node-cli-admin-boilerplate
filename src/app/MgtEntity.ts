@@ -2,7 +2,7 @@ import * as request from 'request';
 import { IFirmwareInfo } from './types';
 
 /** Promisify all rest requests */
-export class MgtModule {
+export class MgtEntity {
   private readonly ipAddr: string;
   private readonly protocol: string;
   private readonly username: string;
@@ -28,6 +28,7 @@ export class MgtModule {
         },
       }, (error, response, body) => {
         if (error) {
+          console.log(error);
           return reject(error);
         }
 

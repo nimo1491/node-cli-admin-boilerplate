@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { MgtEntity } from '../controllers/MgtEntity';
+import { MgtModule } from '../controllers/MgtModule';
 
 export function firmwareInfo() {
   const firmwareInfo = Router();
-  const mgtEntity = new MgtEntity();
+  const mgtModule = new MgtModule();
 
   firmwareInfo.get('/', (req, res) => {
-    const resData = mgtEntity.getFirmwareInfo();
+    const resData = mgtModule.getFirmwareInfo();
     res.json(resData);
   });
 

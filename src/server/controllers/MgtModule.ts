@@ -1,14 +1,14 @@
 import { ILoginReq, ILoginRes, ILogoutRes, authentication } from '../models/session';
 import { IFirmwareInfoRes, findFirmwareInfo } from '../models/firmwareInfo';
 
-export class MgtEntity {
+export class MgtModule {
   private static sessionNum: number = 0;
 
   public constructor() {
   }
 
   public getSessionNum(): number {
-    return MgtEntity.sessionNum;
+    return MgtModule.sessionNum;
   }
 
   public login(data: ILoginReq): ILoginRes {
@@ -23,7 +23,7 @@ export class MgtEntity {
     }
 
     // One session is well enough for testing
-    if (MgtEntity.sessionNum > 0) {
+    if (MgtModule.sessionNum > 0) {
       return {
         error: 'Maximum number of sessions already in use',
         code: 15000,
@@ -31,7 +31,7 @@ export class MgtEntity {
     }
 
     // Occupy the session
-    MgtEntity.sessionNum += 1;
+    MgtModule.sessionNum += 1;
 
     return {
       ok: 0,
@@ -46,7 +46,7 @@ export class MgtEntity {
   }
 
   public logout(): ILogoutRes {
-    MgtEntity.sessionNum -= 1;
+    MgtModule.sessionNum -= 1;
 
     return {
       ok: 0,

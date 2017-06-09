@@ -3,7 +3,7 @@ import * as columnify from 'columnify';
 import * as chalk from 'chalk';
 import { safeLoad } from 'js-yaml';
 import { readFileSync } from 'fs';
-import { MgtModule } from './MgtModule';
+import { MgtEntity } from './MgtEntity';
 
 // Bypass authentication for self-signed certificate
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
@@ -48,12 +48,12 @@ export function cmdManage() {
 
 /** A wrapper function for executing login, then get firmware info, and then logout */
 async function getFirmwareInfoWrapper(ipAddr: string, protocol: string, username: string , password: string) {
-  const mgtModule = new MgtModule(ipAddr, protocol, username, password);
+  const mgtEntity = new MgtEntity(ipAddr, protocol, username, password);
 
   try {
-    await mgtModule.login();
+    await mgtEntity.login();
 
-    const fwInfo = await mgtModule.getFirmwareinfo();
+    const fwInfo = await mgtEntity.getFirmwareinfo();
     fwInfoList.push(Object.assign(
       { 'Node': ipAddr },
       { 'Version': fwInfo.fw_ver },
@@ -61,7 +61,7 @@ async function getFirmwareInfoWrapper(ipAddr: string, protocol: string, username
       { 'Time': fwInfo.time },
     ));
 
-    await mgtModule.logout();
+    await mgtEntity.logout();
   } catch (error) {
     errors++;
   }

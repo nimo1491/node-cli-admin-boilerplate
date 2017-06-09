@@ -1,13 +1,13 @@
 import * as uuid from 'node-uuid';
 import { Router } from 'express';
-import { MgtEntity } from '../controllers/MgtEntity';
+import { MgtModule } from '../controllers/MgtModule';
 
 export function session() {
   const session = Router();
-  const mgtEntity = new MgtEntity();
+  const mgtModule = new MgtModule();
 
   session.post('/', (req, res) => {
-    const resData = mgtEntity.login(req.body);
+    const resData = mgtModule.login(req.body);
 
     if (resData.error) {
       process.nextTick(() => {
@@ -30,7 +30,7 @@ export function session() {
   });
 
   session.delete('/', (req, res) => {
-    const resData = mgtEntity.logout();
+    const resData = mgtModule.logout();
 
     if (req.session !== undefined) {
       req.session.destroy(() => {
