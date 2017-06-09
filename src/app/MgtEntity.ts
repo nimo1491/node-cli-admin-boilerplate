@@ -1,5 +1,5 @@
 import * as request from 'request';
-import { IFirmwareInfo } from './types';
+import { IFirmwareInfo, ICertificateInfo } from './types';
 
 /** Promisify all rest requests */
 export class MgtEntity {
@@ -68,11 +68,34 @@ export class MgtEntity {
     });
   }
 
-  public getFirmwareinfo(): Promise<IFirmwareInfo> {
+  public getFirmwareInfo(): Promise<IFirmwareInfo> {
     return new Promise((resolve, reject) => {
       request({
         method: 'GET',
         url: `${this.protocol}://${this.ipAddr}/api/firmware-info`,
+        headers: {
+          Cookie: this.cookie,
+          'X-CSRFTOKEN': this.token,
+        },
+      }, (error, response, body) => {
+        if (error) {
+          return reject(error);
+        }
+
+        if (response.statusCode !== 200) {
+          return reject(new Error(`HTTP Error: ${response.statusCode}`));
+        }
+
+        return resolve(JSON.parse(body));
+      });
+    });
+  }
+
+  public getCertificateInfo(): Promise<ICertificateInfo> {
+    return new Promise((resolve, reject) => {
+      request({
+        method: 'GET',
+        url: `${this.protocol}://${this.ipAddr}/api/settings/ssl/certificate`,
         headers: {
           Cookie: this.cookie,
           'X-CSRFTOKEN': this.token,

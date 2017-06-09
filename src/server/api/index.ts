@@ -1,12 +1,14 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { session } from './session';
 import { firmwareInfo } from './firmwareInfo';
+import { certificateInfo } from './certificateInfo';
 
 export function api() {
   const api = Router();
 
   api.use('/session', restrict, csrfProtection, session());
   api.use('/firmware-info', restrict, csrfProtection, firmwareInfo());
+  api.use('/settings/ssl/certificate', restrict, csrfProtection, certificateInfo());
 
   // Expose API metadata at the root
   api.get('/', (req, res) => {

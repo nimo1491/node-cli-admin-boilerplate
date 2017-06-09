@@ -1,5 +1,6 @@
 import { ILoginReq, ILoginRes, ILogoutRes, authentication } from '../models/session';
 import { IFirmwareInfoRes, findFirmwareInfo } from '../models/firmwareInfo';
+import { ICertificateInfoRes, findCertificateInfo } from '../models/certificateInfo';
 
 export class MgtModule {
   private static sessionNum: number = 0;
@@ -55,5 +56,9 @@ export class MgtModule {
 
   public getFirmwareInfo(): IFirmwareInfoRes {
     return findFirmwareInfo();
+  }
+
+  public getCertificateInfo(): ICertificateInfoRes {
+    return findCertificateInfo();
   }
 }
