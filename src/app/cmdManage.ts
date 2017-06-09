@@ -5,6 +5,9 @@ import { safeLoad } from 'js-yaml';
 import { readFileSync } from 'fs';
 import { MgtModule } from './MgtModule';
 
+// Bypass authentication for self-signed certificate
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
 // Replace it with what you want
 const delimiter: string = 'Mgt$';
 
@@ -25,7 +28,7 @@ export function cmdManage() {
     .command('mc info', 'Get firmware information')
     .action(async (args, callback) => {
       await Promise.all(config.devices.map(
-        dev => getFirmwareInfoWrapper(dev.ip, dev.username, dev.password),
+        dev => getFirmwareInfoWrapper(dev.ip, config.protocol, dev.username, dev.password),
       ));
 
       const columns = columnify(fwInfoList, {
@@ -44,8 +47,8 @@ export function cmdManage() {
 }
 
 /** A wrapper function for executing login, then get firmware info, and then logout */
-async function getFirmwareInfoWrapper(ipAddr: string, username: string , password: string) {
-  const mgtModule = new MgtModule(ipAddr, username, password);
+async function getFirmwareInfoWrapper(ipAddr: string, protocol: string, username: string , password: string) {
+  const mgtModule = new MgtModule(ipAddr, protocol, username, password);
 
   try {
     await mgtModule.login();

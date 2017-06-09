@@ -4,13 +4,15 @@ import { IFirmwareInfo } from './types';
 /** Promisify all rest requests */
 export class MgtModule {
   private readonly ipAddr: string;
+  private readonly protocol: string;
   private readonly username: string;
   private readonly password: string;
   private cookie: string;
   private token: string;
 
-  public constructor(ipAddr: string, username = 'admin', password = 'admin') {
+  public constructor(ipAddr: string, protocol = 'http', username = 'admin', password = 'admin') {
     this.ipAddr = ipAddr;
+    this.protocol = protocol;
     this.username = username;
     this.password = password;
   }
@@ -19,7 +21,7 @@ export class MgtModule {
     return new Promise((resolve, reject) => {
       request({
         method: 'POST',
-        url: `http://${this.ipAddr}/api/session`,
+        url: `${this.protocol}://${this.ipAddr}/api/session`,
         form: {
           username: this.username,
           password: this.password,
@@ -44,7 +46,7 @@ export class MgtModule {
     return new Promise((resolve, reject) => {
       request({
         method: 'DELETE',
-        url: `http://${this.ipAddr}/api/session`,
+        url: `${this.protocol}://${this.ipAddr}/api/session`,
         headers: {
           Cookie: this.cookie,
           'X-CSRFTOKEN': this.token,
@@ -69,7 +71,7 @@ export class MgtModule {
     return new Promise((resolve, reject) => {
       request({
         method: 'GET',
-        url: `http://${this.ipAddr}/api/firmware-info`,
+        url: `${this.protocol}://${this.ipAddr}/api/firmware-info`,
         headers: {
           Cookie: this.cookie,
           'X-CSRFTOKEN': this.token,
