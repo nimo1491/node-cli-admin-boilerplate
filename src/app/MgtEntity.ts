@@ -28,7 +28,6 @@ export class MgtEntity {
         },
       }, (error, response, body) => {
         if (error) {
-          console.log(error);
           return reject(error);
         }
 

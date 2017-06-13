@@ -1,6 +1,7 @@
 import * as Vorpal from 'vorpal';
 import * as columnify from 'columnify';
 import * as chalk from 'chalk';
+import * as winston from 'winston';
 import { safeLoad } from 'js-yaml';
 import { readFileSync } from 'fs';
 import { MgtEntity } from './MgtEntity';
@@ -23,6 +24,13 @@ export function cmdManage() {
   } catch (error) {
     return console.error(error);
   }
+
+  // Setup logger
+  winston.configure({
+    transports: [
+      new (winston.transports.File)({ filename: 'cli_admin.log' }),
+    ],
+  });
 
   vorpal
     .command('mc info', 'Get firmware information')
@@ -84,6 +92,8 @@ async function getFirmwareInfoWrapper(ipAddr: string, protocol: string, username
 
     await mgtEntity.logout();
   } catch (error) {
+    winston.log('info', ipAddr);
+    winston.log('error', error);
     errors++;
   }
 }
@@ -106,6 +116,8 @@ async function getCertificateInfoWrapper(ipAddr: string, protocol: string, usern
 
     await mgtEntity.logout();
   } catch (error) {
+    winston.log('info', ipAddr);
+    winston.log('error', error);
     errors++;
   }
 }
