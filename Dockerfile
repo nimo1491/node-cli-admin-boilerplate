@@ -5,8 +5,9 @@ WORKDIR /www
 
 ADD . .
 
-RUN npm install
-RUN npm run build
+RUN npm install -g yarn
+RUN yarn install
+RUN yarn run build
 
 EXPOSE 8080
 CMD ["node", "built/server/server.js"]
