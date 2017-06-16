@@ -1,6 +1,11 @@
 import { ILoginReq, ILoginRes, ILogoutRes, authentication } from '../models/session';
 import { IFirmwareInfoRes, findFirmwareInfo } from '../models/firmwareInfo';
 import { ICertificateInfoRes, findCertificateInfo } from '../models/certificateInfo';
+import { IUptimeRes, findUptime } from '../models/uptime';
+import { IChassisStatusRes, findChassisStatus } from '../models/chassisStatus';
+import { ISensorInfoRes, findSensorInfo } from '../models/sensorInfo';
+import { IEventListRes, findEventList } from '../models/eventList';
+import { IFanDutyRes, findFanDuty } from '../models/fanDuty';
 
 export class MgtModule {
   private static sessionNum: number = 0;
@@ -60,5 +65,25 @@ export class MgtModule {
 
   public getCertificateInfo(): ICertificateInfoRes {
     return findCertificateInfo();
+  }
+
+  public getUptime(): IUptimeRes {
+    return findUptime();
+  }
+
+  public getChassisStatus(): IChassisStatusRes {
+    return findChassisStatus();
+  }
+
+  public getSensorInfo(): ISensorInfoRes[] {
+    return findSensorInfo();
+  }
+
+  public getEventList(): IEventListRes[] {
+    return findEventList();
+  }
+
+  public getFanDuty(): IFanDutyRes {
+    return findFanDuty();
   }
 }

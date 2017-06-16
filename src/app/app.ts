@@ -3,6 +3,7 @@ import * as yargs from 'yargs';
 import { cmdWelcome } from './cmdWelcome';
 import { cmdManage } from './cmdManage';
 import { cmdDiscover } from './cmdDiscover';
+import { cmdDashboard } from './cmdDashboard';
 
 // Get real executable name for pkg
 const executable: string = basename(__filename);
@@ -13,6 +14,7 @@ let options = yargs
   .command('welcome', 'Welcome message')
   .command('manage', 'Manage multiple nodes')
   .command('discover', 'Discover manageable nodes')
+  .command('dashboard', 'Dashboard information')
   .demandCommand(1, 'Must provide a valid command')
   .epilog('Copyright Year Company/Author')
   .argv;
@@ -72,6 +74,52 @@ if (command === 'welcome') {
     yargs.showHelp();
   } else {
     cmdDiscover(options);
+  }
+} else if (command === 'dashboard') {
+  options = yargs
+  .reset()
+  .usage(`Usage: ${executable} dashboard [options]`)
+  .example(`${executable} dashboard`, 'Dashboard information')
+  .options('n', {
+    alias: 'node',
+    describe: 'Node\'s URI',
+    require: true,
+    global: false,
+  })
+  .options('i', {
+    alias: 'ifc',
+    describe: 'Protocol',
+    require: true,
+    global: false,
+  })
+  .options('u', {
+    alias: 'user',
+    describe: 'Login user name',
+    require: true,
+    global: false,
+  })
+  .options('p', {
+    alias: 'password',
+    describe: 'Login password',
+    require: true,
+    global: false,
+  })
+  .options('h', {
+    alias: 'help',
+    describe: 'Show help',
+    global: false,
+  })
+  .epilog('Copyright Year Company/Author')
+  .argv;
+
+  // Make help usage manually since I don't want type string
+  if (options.h) {
+    yargs.showHelp();
+  } else if (options.i !== 'http' && options.i !== 'https') {
+    yargs.showHelp();
+    console.error('Wrong protocol: only supports "http" and "https"');
+  } else {
+    cmdDashboard(options);
   }
 } else if (command === 'manage') {
   options = yargs

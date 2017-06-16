@@ -2,12 +2,22 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { session } from './session';
 import { firmwareInfo } from './firmwareInfo';
 import { certificateInfo } from './certificateInfo';
+import { uptime } from './uptime';
+import { chassisStatus } from './chassisStatus';
+import { sensorInfo } from './sensorInfo';
+import { eventList } from './eventList';
+import { fanDuty } from './fanDuty';
 
 export function api() {
   const api = Router();
 
   api.use('/session', restrict, csrfProtection, session());
+  api.use('/status/uptime', restrict, csrfProtection, uptime());
   api.use('/firmware-info', restrict, csrfProtection, firmwareInfo());
+  api.use('/chassis-status', restrict, csrfProtection, chassisStatus());
+  api.use('/sensors', restrict, csrfProtection, sensorInfo());
+  api.use('/oem/fan-duty', restrict, csrfProtection, fanDuty());
+  api.use('/logs/eventlog', restrict, csrfProtection, eventList());
   api.use('/settings/ssl/certificate', restrict, csrfProtection, certificateInfo());
 
   // Expose API metadata at the root
