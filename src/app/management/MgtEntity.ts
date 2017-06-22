@@ -1,5 +1,5 @@
 import * as request from 'request';
-import * as type from './types';
+import * as type from './dataTypes';
 
 /** Promisify all rest requests */
 export class MgtEntity {

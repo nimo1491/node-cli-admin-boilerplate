@@ -1,9 +1,9 @@
 import { basename } from 'path';
 import * as yargs from 'yargs';
-import { cmdWelcome } from './cmdWelcome';
-import { cmdManage } from './cmdManage';
-import { cmdDiscover } from './cmdDiscover';
-import { cmdDashboard } from './cmdDashboard';
+import { cmdWelcome } from './command/cmdWelcome';
+import { cmdManage } from './command/cmdManage';
+import { cmdDiscover } from './command/cmdDiscover';
+import { cmdDashboard } from './command/cmdDashboard';
 
 // Get real executable name for pkg
 const executable: string = basename(__filename);
