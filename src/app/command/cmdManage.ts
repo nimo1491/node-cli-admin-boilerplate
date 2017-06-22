@@ -4,6 +4,7 @@ import * as chalk from 'chalk';
 import * as winston from 'winston';
 import { safeLoad } from 'js-yaml';
 import { readFileSync } from 'fs';
+import { IConfig } from '../configTypes';
 import {
   IErrorOut,
   IFirmwareInfoPout,
@@ -12,22 +13,13 @@ import {
   getCertificateInfoWrapper,
   isIFirmwareInfoPout,
   isICertificateInfoPout,
-} from './MgtWrapper';
+} from '../management/mgtWrapper';
 
 // Bypass authentication for self-signed certificate
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
 // Replace it with what you want
 const delimiter: string = 'Mgt$';
-
-interface IDiscoveredDevice {
-  ip: string;
-}
-
-interface IConfig {
-  protocol: string;
-  devices: IDiscoveredDevice[];
-}
 
 export function cmdManage() {
   const vorpal = new Vorpal();

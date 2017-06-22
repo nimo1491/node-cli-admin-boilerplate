@@ -1,16 +1,12 @@
 import * as chalk from 'chalk';
 import { safeLoad, safeDump } from 'js-yaml';
 import { readFileSync, writeFileSync, accessSync, constants as fsMode } from 'fs';
-import { detectNodeWrapper, IDiscoveredDevice } from './MgtWrapper';
+import { detectNodeWrapper, IDiscoveredDevice } from '../management/mgtWrapper';
+import { IConfig } from '../configTypes';
 
 interface IDiscoverOptions {
   b: number;
   e: number;
-}
-
-interface IConfig {
-  protocol: string;
-  devices: IDiscoveredDevice[];
 }
 
 export async function cmdDiscover(options: IDiscoverOptions) {

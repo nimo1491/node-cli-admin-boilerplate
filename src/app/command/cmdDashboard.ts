@@ -1,4 +1,4 @@
-import { MgtEntity } from './MgtEntity';
+import { MgtEntity } from '../management/MgtEntity';
 import * as blessed from 'blessed';
 import * as contrib from 'blessed-contrib';
 import * as chalk from 'chalk';
