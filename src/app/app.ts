@@ -8,6 +8,9 @@ import { cmdDashboard } from './command/cmdDashboard';
 // Get real executable name for pkg
 const executable: string = basename(__filename);
 
+// Bypass authentication for self-signed certificate
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
 // Yargs: make options
 let options = yargs
   .usage(`Usage: ${executable} <command> [options]`)

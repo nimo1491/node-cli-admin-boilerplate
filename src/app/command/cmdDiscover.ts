@@ -5,9 +5,6 @@ import { readFileSync, writeFileSync, accessSync, constants as fsMode } from 'fs
 import { detectNodeWrapper, IDiscoveredDevice, IDetectNodeWrapperRequest } from '../management/mgtWrapper';
 import { IConfig } from '../configTypes';
 
-// Bypass authentication for self-signed certificate
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
-
 interface IDiscoverOptions {
   b: string | number;
   e: string | number;

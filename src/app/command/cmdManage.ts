@@ -16,9 +16,6 @@ import {
   isICertificateInfoPout,
 } from '../management/mgtWrapper';
 
-// Bypass authentication for self-signed certificate
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
-
 // Replace it with what you want
 const delimiter: string = 'Mgt$';
 
