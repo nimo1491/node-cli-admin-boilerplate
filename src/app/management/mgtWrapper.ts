@@ -25,16 +25,31 @@ export interface ICertificateInfoPout {
   expiration: string;
 }
 
+export interface IDetectNodeWrapperRequest {
+  port?: number;
+  ipAddr: string;
+  protocol: string;
+  username: string;
+  password: string;
+}
+
 /** A wrapper function for executing login, and then logout */
-export async function detectNodeWrapper(port: number, ipAddr = '127.0.0.1', protocol = 'http', username = 'admin' , password = 'admin'): Promise<IDiscoveredDevice | void> {
-  const mgtEntity = new MgtEntity(`${ipAddr}:${port}`, protocol, username, password);
-  const spinner = ora(`Detecting ${ipAddr}:${port} ... `).start();
+export async function detectNodeWrapper(req: IDetectNodeWrapperRequest): Promise<IDiscoveredDevice | void> {
+  let address: string;
+  if (req.port === undefined) {
+    address = `${req.ipAddr}`;
+  } else {
+    address = `${req.ipAddr}:${req.port}`;
+  }
+
+  const mgtEntity = new MgtEntity(address, req.protocol, req.username, req.password);
+  const spinner = ora('Please wait...').start();
 
   try {
     await mgtEntity.login();
     await mgtEntity.logout();
-    spinner.succeed(`Response from ${ipAddr}:${port}`);
-    return Promise.resolve({ ip: `${ipAddr}:${port}` });
+    spinner.succeed(`Response from ${address}`);
+    return Promise.resolve({ ip: `${address}` });
   } catch (error) {
     spinner.stop();
   }

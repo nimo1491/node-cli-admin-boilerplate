@@ -1,26 +1,56 @@
 import * as chalk from 'chalk';
+import * as ip from 'ip';
 import { safeLoad, safeDump } from 'js-yaml';
 import { readFileSync, writeFileSync, accessSync, constants as fsMode } from 'fs';
-import { detectNodeWrapper, IDiscoveredDevice } from '../management/mgtWrapper';
+import { detectNodeWrapper, IDiscoveredDevice, IDetectNodeWrapperRequest } from '../management/mgtWrapper';
 import { IConfig } from '../configTypes';
 
+// Bypass authentication for self-signed certificate
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
 interface IDiscoverOptions {
-  b: number;
-  e: number;
+  b: string | number;
+  e: string | number;
+  i: string;
+  u: string;
+  p: string;
 }
 
 export async function cmdDiscover(options: IDiscoverOptions) {
   const devList: IDiscoveredDevice[] = [];
   const configFile: string = 'config.yml';
-  const ports: number[] = [];
+  const addresses: (number | string)[] = [];
   let config: IConfig = {
-    protocol: 'http',
+    protocol: options.i,
     devices: [],
   };
 
-  // Enumerate all ports
-  for (let i = options.b; i <= options.e; ++i) {
-    ports.push(i);
+  // Check addresses are valid or not and then expand the list
+  if (typeof options.b === 'string' && typeof options.e === 'string') {
+    if (!ip.isV4Format(options.b) || !ip.isV4Format(options.e)) {
+      return console.error(chalk.red('!!! Invalid format of IP addresses'));
+    }
+
+    if (!isValidIpRange(options.b, options.e)) {
+      return console.error(chalk.red('!!! Invalid range of IP addresses'));
+    }
+
+    const beginArr = options.b.split('.').map((subIp) => parseInt(subIp));
+    const endArr = options.e.split('.').map((subIp) => parseInt(subIp));
+
+    for (let i = beginArr[3]; i <= endArr[3]; ++i) {
+      addresses.push(`${beginArr[0]}.${beginArr[1]}.${beginArr[2]}.${i}`);
+    }
+  } else if (typeof options.b === 'number' && typeof options.e === 'number') {
+    if (options.b > options.e) {
+      return console.error(chalk.red('!!! Invalid range of port numbers'));
+    }
+
+    for (let i = options.b; i <= options.e; ++i) {
+      addresses.push(i);
+    }
+  } else {
+    return console.error(chalk.red('!!! Invalid format of IP address or port number'));
   }
 
   // Check and read the existing config file
@@ -33,16 +63,36 @@ export async function cmdDiscover(options: IDiscoverOptions) {
 
   // Discovering
   console.log(chalk.blue('Discovering devices:'));
-  const results = await Promise.all(ports.map(
-    port => detectNodeWrapper(port),
-  ));
+  const results = await Promise.all(addresses.map((addr) => {
+    let req: IDetectNodeWrapperRequest;
+
+    if (typeof addr === 'string') {
+      req = {
+        port: undefined,
+        ipAddr: addr,
+        protocol: options.i,
+        username: options.u,
+        password: options.p,
+      };
+    } else {
+      req = {
+        port: addr,
+        ipAddr: '127.0.0.1',
+        protocol: options.i,
+        username: options.u,
+        password: options.p,
+      };
+    }
+
+    return detectNodeWrapper(req);
+  }));
 
   for (const dev of results) {
     if (dev !== undefined && dev !== null) {
       devList.push(dev);
     }
   }
-  console.log(chalk.blue(`Got ${devList.length} of ${ports.length} nodes...`));
+  console.log(chalk.blue(`Got ${devList.length} of ${addresses.length} nodes...`));
 
   // Combine and filter the devices
   const devSet = new Set();
@@ -57,5 +107,26 @@ export async function cmdDiscover(options: IDiscoverOptions) {
   } catch (error) {
     return console.error(error);
   }
-  console.log(chalk.blue(`Great, now you can check ${configFile} for the discovered devices`));
+
+  if (devList.length === 0) {
+    console.log(chalk.yellow('Oops, no discovered device...'));
+  } else {
+    console.log(chalk.blue(`Great, now you can check ${configFile} for the discovered devices`));
+  }
+}
+
+/** Check IP range is valid or not */
+function isValidIpRange(begin: string, end: string): boolean {
+  const beginArr = begin.split('.');
+  const endArr = end.split('.');
+
+  for (let i = 0; i < 3; ++i) {
+    if (beginArr[i] !== endArr[i]) {
+      console.log(chalk.red('!!! Sorry, currently only support discovering IP addresses within mask 24 at a time'));
+      console.log(chalk.yellow('For example: 192.168.1.1 ~ 192.168.1.255, 10.109.62.1 ~ 10.109.62.255'));
+      return false;
+    }
+  }
+
+  return true;
 }

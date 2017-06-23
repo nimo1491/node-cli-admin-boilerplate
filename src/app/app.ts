@@ -51,13 +51,31 @@ if (command === 'welcome') {
   .example(`${executable} discover`, 'Find out all the nodes')
   .options('b', {
     alias: 'begin',
-    describe: 'Beginning port number',
+    describe: 'Beginning IP address or port number',
     require: true,
     global: false,
   })
   .options('e', {
     alias: 'end',
-    describe: 'Endign port number',
+    describe: 'Endign IP address or port number',
+    require: true,
+    global: false,
+  })
+  .options('i', {
+    alias: 'ifc',
+    describe: 'Protocol',
+    require: true,
+    global: false,
+  })
+  .options('u', {
+    alias: 'user',
+    describe: 'Login user name',
+    require: true,
+    global: false,
+  })
+  .options('p', {
+    alias: 'password',
+    describe: 'Login password',
     require: true,
     global: false,
   })
@@ -72,6 +90,9 @@ if (command === 'welcome') {
   // Make help usage manually since I don't want type string
   if (options.h) {
     yargs.showHelp();
+  } else if (options.i !== 'http' && options.i !== 'https') {
+    yargs.showHelp();
+    console.error('Wrong protocol: only supports "http" and "https"');
   } else {
     cmdDiscover(options);
   }
