@@ -9,6 +9,7 @@ import {
   IErrorOut,
   IFirmwareInfoPout,
   ICertificateInfoPout,
+  IGetInfoWrapperRequest,
   getFirmwareInfoWrapper,
   getCertificateInfoWrapper,
   isIFirmwareInfoPout,
@@ -24,6 +25,10 @@ const delimiter: string = 'Mgt$';
 export function cmdManage() {
   const vorpal = new Vorpal();
   let config: IConfig;
+
+  // TODO: Support getting username/password for each node in config file
+  const username = 'admin';
+  const password = 'admin';
 
   try {
     config = safeLoad(readFileSync('./config.yml', 'utf8'));
@@ -41,9 +46,16 @@ export function cmdManage() {
   vorpal
     .command('mc info', 'Get firmware information')
     .action(async (args, callback) => {
-      const results = await Promise.all(config.devices.map(
-        dev => getFirmwareInfoWrapper(dev.ip, config.protocol, 'admin', 'admin'),
-      ));
+      const results = await Promise.all(config.devices.map((dev) => {
+        const req: IGetInfoWrapperRequest = {
+          ipAddr: dev.ip,
+          protocol: config.protocol,
+          username,
+          password,
+        };
+
+        return getFirmwareInfoWrapper(req);
+      }));
 
       const infoList: IFirmwareInfoPout[] = [];
       const errorList: IErrorOut[] = [];
@@ -72,9 +84,16 @@ export function cmdManage() {
   vorpal
     .command('ssl', 'Get SSL certificate')
     .action(async (args, callback) => {
-      const results = await Promise.all(config.devices.map(
-        dev => getCertificateInfoWrapper(dev.ip, config.protocol, 'admin', 'admin'),
-      ));
+      const results = await Promise.all(config.devices.map((dev) => {
+        const req: IGetInfoWrapperRequest = {
+          ipAddr: dev.ip,
+          protocol: config.protocol,
+          username,
+          password,
+        };
+
+        return getCertificateInfoWrapper(req);
+      }));
 
       const infoList: ICertificateInfoPout[] = [];
       const errorList: IErrorOut[] = [];

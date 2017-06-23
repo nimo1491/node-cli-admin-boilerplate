@@ -33,6 +33,13 @@ export interface IDetectNodeWrapperRequest {
   password: string;
 }
 
+export interface IGetInfoWrapperRequest {
+  ipAddr: string;
+  protocol: string;
+  username: string;
+  password: string;
+}
+
 /** A wrapper function for executing login, and then logout */
 export async function detectNodeWrapper(req: IDetectNodeWrapperRequest): Promise<IDiscoveredDevice | void> {
   let address: string;
@@ -56,8 +63,8 @@ export async function detectNodeWrapper(req: IDetectNodeWrapperRequest): Promise
 }
 
 /** A wrapper function for executing login, then get firmware info, and then logout */
-export async function getFirmwareInfoWrapper(ipAddr: string, protocol: string, username: string , password: string): Promise<IFirmwareInfoPout | IErrorOut> {
-  const mgtEntity = new MgtEntity(ipAddr, protocol, username, password);
+export async function getFirmwareInfoWrapper(req: IGetInfoWrapperRequest): Promise<IFirmwareInfoPout | IErrorOut> {
+  const mgtEntity = new MgtEntity(req.ipAddr, req.protocol, req.username, req.password);
 
   try {
     await mgtEntity.login();
@@ -65,14 +72,14 @@ export async function getFirmwareInfoWrapper(ipAddr: string, protocol: string, u
     await mgtEntity.logout();
 
     return Promise.resolve({
-      node: ipAddr,
+      node: req.ipAddr,
       version: fwInfo.fw_ver,
       date: fwInfo.date,
       time: fwInfo.time,
     });
   } catch (error) {
     return Promise.resolve({
-      node: ipAddr,
+      node: req.ipAddr,
       error: error,
     });
   }
@@ -84,8 +91,8 @@ export function isIFirmwareInfoPout(info: IFirmwareInfoPout | IErrorOut): info i
 }
 
 /** A wrapper function for executing login, then get certificate info, and then logout */
-export async function getCertificateInfoWrapper(ipAddr: string, protocol: string, username: string , password: string): Promise<ICertificateInfoPout | IErrorOut> {
-  const mgtEntity = new MgtEntity(ipAddr, protocol, username, password);
+export async function getCertificateInfoWrapper(req: IGetInfoWrapperRequest): Promise<ICertificateInfoPout | IErrorOut> {
+  const mgtEntity = new MgtEntity(req.ipAddr, req.protocol, req.username, req.password);
 
   try {
     await mgtEntity.login();
@@ -93,7 +100,7 @@ export async function getCertificateInfoWrapper(ipAddr: string, protocol: string
     await mgtEntity.logout();
 
     return Promise.resolve({
-      node: ipAddr,
+      node: req.ipAddr,
       org: certInfo.to_organization,
       unit: certInfo.to_organization_unit,
       country: certInfo.to_country,
@@ -101,7 +108,7 @@ export async function getCertificateInfoWrapper(ipAddr: string, protocol: string
     });
   } catch (error) {
     return Promise.resolve({
-      node: ipAddr,
+      node: req.ipAddr,
       error: error,
     });
   }
