@@ -22,6 +22,7 @@ export class MgtEntity {
       request({
         method: 'POST',
         url: `${this.protocol}://${this.ipAddr}/api/session`,
+        timeout: 5000,
         form: {
           username: this.username,
           password: this.password,
