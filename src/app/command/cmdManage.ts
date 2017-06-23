@@ -1,10 +1,11 @@
 import * as Vorpal from 'vorpal';
 import * as columnify from 'columnify';
 import * as chalk from 'chalk';
-import * as winston from 'winston';
+// import * as winston from 'winston';
 import { safeLoad } from 'js-yaml';
 import { readFileSync } from 'fs';
 import { IConfig } from '../configTypes';
+import { log } from '../log';
 import {
   IErrorOut,
   IFirmwareInfoPout,
@@ -32,13 +33,6 @@ export function cmdManage() {
   } catch (error) {
     return console.error(error);
   }
-
-  // Setup logger
-  winston.configure({
-    transports: [
-      new (winston.transports.File)({ filename: 'cli_admin.log' }),
-    ],
-  });
 
   vorpal
     .command('mc info', 'Get firmware information')
@@ -72,8 +66,8 @@ export function cmdManage() {
       if (errorList.length > 0) {
         console.error(chalk.red('!!! Got some errors, please check log for the details'));
         for (const err of errorList) {
-          winston.log('error', err.node);
-          winston.log('error', err.error);
+          log('error', err.node);
+          log('error', err.error);
         }
       }
     });
@@ -110,8 +104,8 @@ export function cmdManage() {
       if (errorList.length > 0) {
         console.error(chalk.red('!!! Got some errors, please check log for the details'));
         for (const err of errorList) {
-          winston.log('error', err.node);
-          winston.log('error', err.error);
+          log('error', err.node);
+          log('error', err.error);
         }
       }
     });
