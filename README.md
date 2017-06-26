@@ -28,6 +28,16 @@ yarn run build
 
 The application will be put into the *built* folder.
 
+## Development server
+
+```bash
+yarn run server
+```
+
+This will start a server, listening on connection from `localhost` on port `8080`. 
+
+When you change your source code, it should live-reload the changes.
+
 ## Generate document
 
 Use [typedoc](https://github.com/TypeStrong/typedoc) to generate API document:
@@ -50,17 +60,21 @@ The executable will be put into the *dist* folder.
 
 ## Docker Support
 
+Use docker to launch multiple development servers to simulate the Data Center environment.
+
 ### Build your docker
 
 ```bash
 docker build -t name/emulator .
 ```
 
-### Run your docker
+### Launch 10 development servers
 
 ```bash
-docker run -d --name=emulator -p 8080:8080 name/emulator
+docker-compose scale web=10
 ```
+
+**Note:** replace `image: nimo1491/emulator` in `docker-compose.yml` by your docker image name.
 
 ## License
 
