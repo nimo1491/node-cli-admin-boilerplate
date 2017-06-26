@@ -1,5 +1,4 @@
 import { MgtEntity } from './MgtEntity';
-import * as ora from 'ora';
 
 export interface IDiscoveredDevice {
   ip: string;
@@ -50,15 +49,13 @@ export async function detectNodeWrapper(req: IDetectNodeWrapperRequest): Promise
   }
 
   const mgtEntity = new MgtEntity(address, req.protocol, req.username, req.password);
-  const spinner = ora('Please wait...').start();
 
   try {
     await mgtEntity.login();
     await mgtEntity.logout();
-    spinner.succeed(`Response from ${address}`);
     return Promise.resolve({ ip: `${address}` });
   } catch (error) {
-    spinner.stop();
+    return Promise.resolve(undefined);
   }
 }
 

@@ -4,6 +4,7 @@ import { safeLoad, safeDump } from 'js-yaml';
 import { readFileSync, writeFileSync, accessSync, constants as fsMode } from 'fs';
 import { detectNodeWrapper, IDiscoveredDevice, IDetectNodeWrapperRequest } from '../management/mgtWrapper';
 import { IConfig } from '../configTypes';
+import * as Listr from 'listr';
 
 interface IDiscoverOptions {
   b: string | number;
@@ -60,7 +61,7 @@ export async function cmdDiscover(options: IDiscoverOptions) {
 
   // Discovering
   console.log(chalk.blue('Discovering devices:'));
-  const results = await Promise.all(addresses.map((addr) => {
+  const subtasks = addresses.map((addr) => {
     let req: IDetectNodeWrapperRequest;
 
     if (typeof addr === 'string') {
@@ -81,13 +82,37 @@ export async function cmdDiscover(options: IDiscoverOptions) {
       };
     }
 
-    return detectNodeWrapper(req);
-  }));
-
-  for (const dev of results) {
-    if (dev !== undefined && dev !== null) {
-      devList.push(dev);
+    return {
+      title: `${addr}`,
+      task: async (ctx, task) => {
+        const result = await detectNodeWrapper(req);
+        if (result !== undefined) {
+          task.title = chalk.green(`Response from ${addr}`);
+          devList.push(result);
+        } else {
+          task.skip(chalk.red('No response'));
+        }
+      },
     }
+  });
+
+  const tasks = new Listr([
+    {
+      title: 'Discovering',
+      task: () => {
+        return new Listr(subtasks, {
+          concurrent: 10,
+        });
+      },
+    },
+  ]);
+
+  try {
+    await tasks.run();
+  } catch (error) {}
+
+  for (const dev of devList) {
+    console.log(chalk.green(`Response from ${dev.ip}`));
   }
   console.log(chalk.blue(`Got ${devList.length} of ${addresses.length} nodes...`));
 
