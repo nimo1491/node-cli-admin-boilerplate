@@ -4,6 +4,14 @@ A minimalistic yet Node boilerplate for making administration utility
 
 ---
 
+> You can see dashboard information of a node.
+
+![Dashboard Command](https://user-images.githubusercontent.com/738544/27579345-c81c5f5a-5b59-11e7-97e2-01ded749926d.gif)
+
+> Or easily manage multiple nodes.
+
+![Manage Command](https://user-images.githubusercontent.com/738544/27579430-0e186bac-5b5a-11e7-8a7e-9f3f76ec32d5.gif)
+
 ## Install
 
 Clone the repo via git:
