@@ -2,8 +2,8 @@ import * as chalk from 'chalk';
 import * as ip from 'ip';
 import { safeLoad, safeDump } from 'js-yaml';
 import { readFileSync, writeFileSync, accessSync, constants as fsMode } from 'fs';
-import { detectNodeWrapper, IDiscoveredDevice, IDetectNodeWrapperRequest } from '../management/mgtWrapper';
-import { IConfig } from '../configTypes';
+import { detectNodeWrapper, IDetectNodeWrapperRequest } from '../management/mgtWrapper';
+import { IConfig, IConfigDevice } from '../configTypes';
 import * as Listr from 'listr';
 
 interface IDiscoverOptions {
@@ -15,11 +15,13 @@ interface IDiscoverOptions {
 }
 
 export async function cmdDiscover(options: IDiscoverOptions) {
-  const devList: IDiscoveredDevice[] = [];
+  const devList: IConfigDevice[] = [];
   const configFile: string = 'config.yml';
   const addresses: (number | string)[] = [];
   let config: IConfig = {
     protocol: options.i,
+    username: options.u,
+    password: options.p,
     devices: [],
   };
 
@@ -88,7 +90,12 @@ export async function cmdDiscover(options: IDiscoverOptions) {
         const result = await detectNodeWrapper(req);
         if (result !== undefined) {
           task.title = chalk.green(`Response from ${addr}`);
-          devList.push(result);
+          devList.push(Object.assign(
+            result,
+            { protocol: options.i },
+            { username: options.u },
+            { password: options.p },
+          ));
         } else {
           task.skip(chalk.red('No response'));
         }
@@ -111,17 +118,33 @@ export async function cmdDiscover(options: IDiscoverOptions) {
     await tasks.run();
   } catch (error) {}
 
+  // Combine and filter the devices
   for (const dev of devList) {
+    let i = 0;
+
+    for (i = 0; i < config.devices.length; ++i) {
+      if (config.devices[i].ip === dev.ip) {
+        break;
+      }
+    }
+
+    if (i === config.devices.length) {
+      config.devices.push(dev);
+    }
     console.log(chalk.green(`Response from ${dev.ip}`));
   }
   console.log(chalk.blue(`Got ${devList.length} of ${addresses.length} nodes...`));
 
-  // Combine and filter the devices
-  const devSet = new Set();
-  config.devices.concat(devList).forEach((dev) => {
-    devSet.add(JSON.stringify(dev));
+  // Sort by address string
+  config.devices.sort((a, b) => {
+    if (a.ip > b.ip) {
+      return 1;
+    }
+    if (a.ip < b.ip) {
+      return -1;
+    }
+    return 0;
   });
-  config.devices = Array.from(devSet).map(dev => JSON.parse(dev));
 
   // Write back
   try {

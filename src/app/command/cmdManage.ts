@@ -24,10 +24,6 @@ export function cmdManage() {
   const vorpal = new Vorpal();
   let config: IConfig;
 
-  // TODO: Support getting username/password for each node in config file
-  const username = 'admin';
-  const password = 'admin';
-
   try {
     config = safeLoad(readFileSync('./config.yml', 'utf8'));
   } catch (error) {
@@ -43,9 +39,9 @@ export function cmdManage() {
       const subtasks = config.devices.map((dev) => {
         const req: IGetInfoWrapperRequest = {
           ipAddr: dev.ip,
-          protocol: config.protocol,
-          username,
-          password,
+          protocol: dev.protocol || config.protocol,
+          username: dev.username || config.username,
+          password: dev.password || config.password,
         };
 
         return {
@@ -99,9 +95,9 @@ export function cmdManage() {
       const subtasks = config.devices.map((dev) => {
         const req: IGetInfoWrapperRequest = {
           ipAddr: dev.ip,
-          protocol: config.protocol,
-          username,
-          password,
+          protocol: dev.protocol || config.protocol,
+          username: dev.username || config.username,
+          password: dev.password || config.password,
         };
 
         return {
