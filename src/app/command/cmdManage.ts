@@ -74,6 +74,9 @@ export function cmdManage() {
 
       const columns = columnify(infoList, {
         headingTransform: heading => chalk.bold.magenta(heading.toUpperCase()),
+        config: {
+          node: { minWidth: 24 },
+        },
       });
       console.log(columns);
 
@@ -130,6 +133,9 @@ export function cmdManage() {
 
       const columns = columnify(infoList, {
         headingTransform: heading => chalk.bold.magenta(heading.toUpperCase()),
+        config: {
+          node: { minWidth: 24 },
+        },
       });
       console.log(columns);
 
