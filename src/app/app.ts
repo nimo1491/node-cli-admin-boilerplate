@@ -51,7 +51,7 @@ if (command === 'welcome') {
   options = yargs
   .reset()
   .usage(`Usage: ${executable} discover [options]`)
-  .example(`${executable} discover`, 'Find out all the nodes')
+  .example(`${executable} discover -b 30500 -e 31500 -i http -u admin -p admin`, 'Find out all the nodes')
   .options('b', {
     alias: 'begin',
     describe: 'Beginning IP address or port number',
@@ -103,7 +103,7 @@ if (command === 'welcome') {
   options = yargs
   .reset()
   .usage(`Usage: ${executable} dashboard [options]`)
-  .example(`${executable} dashboard`, 'Dashboard information')
+  .example(`${executable} dashboard -n 127.0.0.1:8080 -i http -u admin -p admin`, 'Get dashboard information')
   .options('n', {
     alias: 'node',
     describe: 'Node\'s URI',
